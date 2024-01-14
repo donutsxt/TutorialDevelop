@@ -1,14 +1,25 @@
 package com.techacademy.entity;
 
-import jakarta.persistence.Column;
+import lombok.Data;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import jakarta.persistence.Table;
+import jakarta.persistence.Id;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.Data;
+import jakarta.persistence.Column;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+
+import jakarta.validation.constraints.Email; // 追加
+import jakarta.validation.constraints.Max; // 追加
+import jakarta.validation.constraints.Min; // 追加
+import jakarta.validation.constraints.NotEmpty; // 追加
+import jakarta.validation.constraints.NotNull; // 追加
+import org.hibernate.validator.constraints.Length; // 追加
+
+import jakarta.persistence.OneToOne; // 追加
+import jakarta.persistence.PreRemove; // 追加
+import org.springframework.transaction.annotation.Transactional; // 追加
 
 @Data
 @Entity
@@ -27,18 +38,37 @@ public class User {
 
     /** 名前。20桁。null不許可 */
     @Column(length = 20, nullable = false)
+    @NotEmpty // 追加
+    @Length(max=20)
     private String name;
 
     /** 性別。2桁。列挙型（文字列） */
     @Column(length = 2)
     @Enumerated(EnumType.STRING)
+    @NotNull
     private Gender gender;
 
     /** 年齢 */
+    @Min(0)
+    @Max(120)
     private Integer age;
 
     /** メールアドレス。50桁。null許可 */
     @Column(length = 50)
+    @Email // 追加
+    @Length(max=50)
     private String email;
+    
+    @OneToOne(mappedBy="user")
+    private Authentication authentication;
 
+    /** レコードが削除される前に行なう処理 */
+    @PreRemove
+    @Transactional
+    private void preRemove() {
+        // 認証エンティティからuserを切り離す
+        if (authentication!=null) {
+            authentication.setUser(null);
+        }
+    }
 }
