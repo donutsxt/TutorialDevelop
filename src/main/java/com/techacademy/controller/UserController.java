@@ -72,13 +72,12 @@ public class UserController {
     @PostMapping("/update/{id}/")
     public String postUser(@PathVariable Integer id, @Validated User user, BindingResult res, Model model) {
         if(res.hasErrors()) {
-            id = null;
-            if(Objects.isNull(id)) {
+            // id = null;
+            // if(Objects.isNull(id)) {
                 return "user/update";
-            }
+            // }
         }
         service.saveUser(user);
-        model.addAttribute("user", service.getUser(id));
         return "redirect:/user/list";
         }
 

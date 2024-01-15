@@ -17,8 +17,8 @@
         <span th:errors="*{name}" class="err"></span>
         <br>
         <label for="gender">性別</label>
-        <select th:field="*{gender}">
-            <option value="" th:text="選択してください" th:errorclass="err">
+        <select th:field="*{gender}"  th:errorclass="err">
+            <option value="" th:text="選択してください">
             <option th:each="item:${T(com.techacademy.entity.User.Gender).values()}" th:value="${item}" th:text="${item}" th:selected="*{gender} == ${item}">
         </select>
         <span th:errors="*{gender}" class="err"></span>
